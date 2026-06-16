@@ -1,0 +1,22 @@
+name: CI Pipeline
+
+on:
+  pull_request:
+    branches: [ "develop" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Login to Docker Hub
+        run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
+
+      - name: Build Image
+        run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/taskflow-cicd:latest .
+
+      - name: Push Image
+        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/taskflow-cicd:latest
